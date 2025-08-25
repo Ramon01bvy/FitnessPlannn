@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { 
   Dumbbell, 
   BarChart3, 
@@ -9,9 +9,15 @@ import {
   Camera,
   Play,
   Menu,
-  X
+  X,
+  Star,
+  Users,
+  Zap,
+  TrendingUp,
+  Award,
+  ArrowRight
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
@@ -19,6 +25,9 @@ export default function Landing() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const { toast } = useToast();
+  const { scrollYProgress } = useScroll();
+  const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
   const handleCheckout = async (plan: string) => {
     try {
@@ -175,23 +184,52 @@ export default function Landing() {
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 grid lg:grid-cols-2 gap-10 lg:gap-12 items-center">
+          {/* Background gradient */}
+          <div className="absolute inset-0 bg-gradient-to-br from-gold-500/5 via-transparent to-transparent" />
+          <motion.div 
+            className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(251,191,36,0.1),transparent_50%)]"
+            style={{ y, opacity }}
+          />
+          
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 grid lg:grid-cols-2 gap-10 lg:gap-12 items-center relative z-10">
             <div>
-              <motion.h1 
-                initial={{opacity:0,y:10}} 
+              <motion.div
+                initial={{opacity:0,y:30}} 
                 animate={{opacity:1,y:0}} 
-                transition={{duration:.6}} 
-                className="text-[2rem] sm:text-5xl font-bold leading-tight tracking-tight text-gold-500"
+                transition={{duration:.8}} 
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gold-500/30 bg-gold-500/10 text-gold-400 text-sm mb-6"
+                data-testid="hero-badge"
+              >
+                <Zap className="h-4 w-4" />
+                Nu gebruikt door 10,000+ atleten
+              </motion.div>
+              
+              <motion.h1 
+                initial={{opacity:0,y:30}} 
+                animate={{opacity:1,y:0}} 
+                transition={{duration:.8, delay:.1}} 
+                className="text-[2rem] sm:text-5xl lg:text-6xl font-bold leading-tight tracking-tight text-gold-500"
                 data-testid="hero-title"
               >
                 Elite Exclusive Personal Training App
               </motion.h1>
               
-              <p className="mt-4 text-base sm:text-lg text-gold-300" data-testid="hero-description">
+              <motion.p 
+                initial={{opacity:0,y:30}} 
+                animate={{opacity:1,y:0}} 
+                transition={{duration:.8, delay:.2}}
+                className="mt-4 text-base sm:text-lg lg:text-xl text-gold-300 leading-relaxed" 
+                data-testid="hero-description"
+              >
                 Persoonlijke trainingsschema's, progressie‑tracking, slimme gewichtsadviezen en een complete voedingsbibliotheek — in Marcodonato stijl.
-              </p>
+              </motion.p>
               
-              <ul className="mt-6 space-y-3 text-gold-400 text-sm sm:text-base">
+              <motion.ul 
+                initial={{opacity:0,y:30}} 
+                animate={{opacity:1,y:0}} 
+                transition={{duration:.8, delay:.3}}
+                className="mt-6 space-y-3 text-gold-400 text-sm sm:text-base"
+              >
                 <li className="flex items-start gap-3" data-testid="feature-programs">
                   <CheckCircle2 className="mt-1 shrink-0"/>
                   <span>30+ programmasjablonen (PPL, upper/lower, kracht, cut/bulk)</span>
@@ -208,9 +246,14 @@ export default function Landing() {
                   <CheckCircle2 className="mt-1 shrink-0"/>
                   <span>Vooruitgangs‑analytics met PR's en foto‑timeline</span>
                 </li>
-              </ul>
+              </motion.ul>
               
-              <div className="mt-8 flex flex-wrap gap-3">
+              <motion.div 
+                initial={{opacity:0,y:30}} 
+                animate={{opacity:1,y:0}} 
+                transition={{duration:.8, delay:.4}}
+                className="mt-8 flex flex-wrap gap-3"
+              >
                 <Button
                   size="lg"
                   className="bg-gold-500 text-black hover:bg-gold-400 w-full sm:w-auto"
@@ -228,7 +271,7 @@ export default function Landing() {
                   <Play className="mr-2 h-4 w-4" />
                   Bekijk demo
                 </Button>
-              </div>
+              </motion.div>
               
               <p className="mt-3 text-sm text-gold-300" data-testid="trial-info">
                 Geen creditcard nodig · Annuleer wanneer je wilt
@@ -280,13 +323,101 @@ export default function Landing() {
           </div>
         </section>
 
+        {/* Stats Section */}
+        <section className="py-16 border-y border-gold-500/30 bg-gradient-to-r from-transparent via-gold-500/5 to-transparent">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+              <StatCard 
+                icon={<Users />} 
+                value={10000} 
+                suffix="+" 
+                label="Actieve gebruikers" 
+                testId="stat-users"
+              />
+              <StatCard 
+                icon={<Dumbbell />} 
+                value={250000} 
+                suffix="+" 
+                label="Workouts voltooid" 
+                testId="stat-workouts"
+              />
+              <StatCard 
+                icon={<TrendingUp />} 
+                value={95} 
+                suffix="%" 
+                label="Ziet verbetering" 
+                testId="stat-improvement"
+              />
+              <StatCard 
+                icon={<Award />} 
+                value={4.9} 
+                suffix="/5" 
+                label="App Store rating" 
+                testId="stat-rating"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Social Proof Section */}
+        <section className="py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.h2 
+              initial={{opacity:0,y:30}} 
+              whileInView={{opacity:1,y:0}} 
+              transition={{duration:.6}}
+              className="text-2xl md:text-3xl font-bold text-center text-gold-500 mb-12"
+              data-testid="testimonials-title"
+            >
+              Wat zeggen onze atleten?
+            </motion.h2>
+            <div className="grid md:grid-cols-3 gap-6">
+              <TestimonialCard 
+                quote="Marco's app heeft mijn trainingen naar een heel nieuw niveau getild. De progressietracking is geweldig!"
+                author="Sarah M."
+                role="Powerlifter"
+                rating={5}
+                testId="testimonial-1"
+              />
+              <TestimonialCard 
+                quote="Eindelijk een app die echt begrijpt hoe bodybuilding werkt. De voedingsadviezen zijn top!"
+                author="Kevin D."
+                role="Bodybuilder"
+                rating={5}
+                testId="testimonial-2"
+              />
+              <TestimonialCard 
+                quote="De beste investering die ik heb gedaan voor mijn fitness journey. Zeer aan te raden!"
+                author="Lisa V."
+                role="Fitness enthusiast"
+                rating={5}
+                testId="testimonial-3"
+              />
+            </div>
+          </div>
+        </section>
+
         {/* Features Section */}
         <section id="features" className="py-16 border-t border-gold-500">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold tracking-tight text-gold-500" data-testid="features-title">
+            <motion.h2 
+              initial={{opacity:0,y:30}} 
+              whileInView={{opacity:1,y:0}} 
+              transition={{duration:.6}}
+              className="text-3xl font-bold tracking-tight text-gold-500 text-center mb-4" 
+              data-testid="features-title"
+            >
               Wat je krijgt
-            </h2>
-            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            </motion.h2>
+            <motion.p 
+              initial={{opacity:0,y:30}} 
+              whileInView={{opacity:1,y:0}} 
+              transition={{duration:.6, delay:.1}}
+              className="text-center text-gold-300 text-lg mb-10 max-w-2xl mx-auto"
+            >
+              Alles wat je nodig hebt voor jouw fitness journey, gebouwd met de expertise van Marco Donato.
+            </motion.p>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               <FeatureCard 
                 icon={<Dumbbell/>} 
                 title="Trainingsbibliotheek" 
@@ -450,9 +581,16 @@ interface FeatureCardProps {
 
 function FeatureCard({ icon, title, description, testId }: FeatureCardProps) {
   return (
-    <div className="p-6 rounded-2xl border border-gold-500 bg-black shadow-sm h-full flex flex-col" data-testid={testId}>
+    <motion.div 
+      initial={{opacity:0,y:30}} 
+      whileInView={{opacity:1,y:0}} 
+      transition={{duration:.6}}
+      whileHover={{y: -5, transition: {duration: 0.3}}}
+      className="p-6 rounded-2xl border border-gold-500 bg-black shadow-sm h-full flex flex-col hover:shadow-lg hover:shadow-gold-500/20 transition-all duration-300 group" 
+      data-testid={testId}
+    >
       <div className="flex items-center gap-3 text-gold-500">
-        <div className="h-10 w-10 rounded-2xl border border-gold-500 grid place-items-center">
+        <div className="h-10 w-10 rounded-2xl border border-gold-500 grid place-items-center group-hover:bg-gold-500 group-hover:text-black transition-all duration-300">
           {icon}
         </div>
         <h3 className="font-semibold" data-testid={`${testId}-title`}>{title}</h3>
@@ -460,7 +598,7 @@ function FeatureCard({ icon, title, description, testId }: FeatureCardProps) {
       <p className="mt-3 text-gold-300 text-sm flex-1" data-testid={`${testId}-description`}>
         {description}
       </p>
-    </div>
+    </motion.div>
   );
 }
 
@@ -488,10 +626,14 @@ function PricingPlan({
   testId 
 }: PricingPlanProps) {
   return (
-    <div 
+    <motion.div 
+      initial={{opacity:0,y:30}} 
+      whileInView={{opacity:1,y:0}} 
+      transition={{duration:.6}}
+      whileHover={{scale: featured ? 1.05 : 1.02, transition: {duration: 0.3}}}
       className={`p-6 rounded-2xl border border-gold-500 ${
-        featured ? "bg-gold-500 text-black" : "bg-black text-gold-500"
-      } shadow-sm relative flex flex-col`}
+        featured ? "bg-gold-500 text-black shadow-xl shadow-gold-500/30" : "bg-black text-gold-500 hover:shadow-lg hover:shadow-gold-500/20"
+      } shadow-sm relative flex flex-col transition-all duration-300`}
       data-testid={testId}
     >
       {featured && (
@@ -524,7 +666,121 @@ function PricingPlan({
       >
         {loading ? "Doorsturen…" : cta}
       </Button>
-    </div>
+    </motion.div>
+  );
+}
+
+interface StatCardProps {
+  icon: React.ReactNode;
+  value: number;
+  suffix: string;
+  label: string;
+  testId: string;
+}
+
+function StatCard({ icon, value, suffix, label, testId }: StatCardProps) {
+  const [count, setCount] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !isVisible) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+    
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [isVisible]);
+  
+  useEffect(() => {
+    if (!isVisible) return;
+    
+    let start = 0;
+    const duration = 2000;
+    const increment = value / (duration / 16);
+    const timer = setInterval(() => {
+      start += increment;
+      if (start >= value) {
+        setCount(value);
+        clearInterval(timer);
+      } else {
+        setCount(Math.floor(start));
+      }
+    }, 16);
+    
+    return () => clearInterval(timer);
+  }, [isVisible, value]);
+  
+  return (
+    <motion.div 
+      ref={ref}
+      initial={{opacity:0,y:30}} 
+      whileInView={{opacity:1,y:0}} 
+      transition={{duration:.6}}
+      className="text-center"
+      data-testid={testId}
+    >
+      <div className="flex justify-center mb-3">
+        <div className="w-12 h-12 rounded-xl bg-gold-500/10 border border-gold-500/30 flex items-center justify-center text-gold-400">
+          {icon}
+        </div>
+      </div>
+      <div className="text-2xl md:text-3xl font-bold text-gold-500" data-testid={`${testId}-value`}>
+        {count.toLocaleString()}{suffix}
+      </div>
+      <div className="text-sm text-gold-300 mt-1" data-testid={`${testId}-label`}>
+        {label}
+      </div>
+    </motion.div>
+  );
+}
+
+interface TestimonialCardProps {
+  quote: string;
+  author: string;
+  role: string;
+  rating: number;
+  testId: string;
+}
+
+function TestimonialCard({ quote, author, role, rating, testId }: TestimonialCardProps) {
+  return (
+    <motion.div 
+      initial={{opacity:0,y:30}} 
+      whileInView={{opacity:1,y:0}} 
+      transition={{duration:.6}}
+      className="p-6 rounded-2xl border border-gold-500/30 bg-black/50 backdrop-blur" 
+      data-testid={testId}
+    >
+      <div className="flex mb-4">
+        {[...Array(rating)].map((_, i) => (
+          <Star key={i} className="w-4 h-4 text-gold-400 fill-current" />
+        ))}
+      </div>
+      <blockquote className="text-gold-200 mb-4" data-testid={`${testId}-quote`}>
+        "{quote}"
+      </blockquote>
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 bg-gradient-to-br from-gold-400 to-gold-600 rounded-full flex items-center justify-center">
+          <span className="text-black font-semibold text-sm">
+            {author.charAt(0)}
+          </span>
+        </div>
+        <div>
+          <div className="font-semibold text-gold-400" data-testid={`${testId}-author`}>
+            {author}
+          </div>
+          <div className="text-sm text-gold-300" data-testid={`${testId}-role`}>
+            {role}
+          </div>
+        </div>
+      </div>
+    </motion.div>
   );
 }
 
