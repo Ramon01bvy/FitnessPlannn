@@ -6,11 +6,11 @@ import { isUnauthorizedError } from "@/lib/authUtils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { 
-  Activity, 
-  Flame, 
-  Trophy, 
-  Apple, 
+import {
+  Activity,
+  Flame,
+  Trophy,
+  Apple,
   TrendingUp,
   Play,
   BarChart3
@@ -139,7 +139,7 @@ export default function Home() {
             </p>
           </div>
           <div className="flex space-x-4">
-            <Button 
+            <Button
               className="bg-gold-500 text-black hover:bg-gold-400"
               asChild
               data-testid="button-start-workout"
@@ -253,8 +253,8 @@ export default function Home() {
                 </>
               ) : workoutSessions?.length > 0 ? (
                 workoutSessions.slice(0, 3).map((session: any) => (
-                  <div 
-                    key={session.id} 
+                  <div
+                    key={session.id}
                     className="flex justify-between items-center py-3 border-b border-gold-500/20 last:border-b-0"
                     data-testid={`workout-${session.id}`}
                   >
@@ -279,7 +279,7 @@ export default function Home() {
                 <div className="text-center py-8 text-gold-300" data-testid="no-workouts">
                   <Activity className="h-12 w-12 mx-auto mb-4 opacity-50" />
                   <p>Nog geen workouts gelogd</p>
-                  <Button 
+                  <Button
                     className="mt-4 bg-gold-500 text-black hover:bg-gold-400"
                     asChild
                     data-testid="button-first-workout"
@@ -353,7 +353,7 @@ export default function Home() {
                     Beperkte recepten
                   </li>
                 </ul>
-                <Button 
+                <Button
                   className="w-full bg-gold-500 text-black hover:bg-gold-400 text-lg py-6"
                   onClick={() => handleUpgrade('Start')}
                   disabled={upgradingPlan === 'Start'}
@@ -401,7 +401,7 @@ export default function Home() {
                       Beperkte recepten
                     </li>
                   </ul>
-                  <Button 
+                  <Button
                     className="w-full bg-gray-500 text-white hover:bg-gray-400"
                     onClick={() => handleUpgrade('Start')}
                     disabled={upgradingPlan === 'Start' || user?.subscriptionTier === 'Start'}
@@ -437,7 +437,7 @@ export default function Home() {
                       Analytics & PR's
                     </li>
                   </ul>
-                  <Button 
+                  <Button
                     className="w-full bg-gold-500 text-black hover:bg-gold-400"
                     onClick={() => handleUpgrade('Pro')}
                     disabled={upgradingPlan === 'Pro'}
@@ -478,7 +478,7 @@ export default function Home() {
                       Prioriteit ondersteuning
                     </li>
                   </ul>
-                  <Button 
+                  <Button
                     className="w-full bg-gold-500 text-black hover:bg-gold-400"
                     onClick={() => handleUpgrade('Jaar')}
                     disabled={upgradingPlan === 'Jaar'}
@@ -505,8 +505,8 @@ export default function Home() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="h-20 border-gold-500/50 text-gold-400 hover:bg-gold-500/10"
                 asChild
                 data-testid="action-workouts"
@@ -518,9 +518,9 @@ export default function Home() {
                   </div>
                 </Link>
               </Button>
-              
-              <Button 
-                variant="outline" 
+
+              <Button
+                variant="outline"
                 className="h-20 border-gold-500/50 text-gold-400 hover:bg-gold-500/10"
                 asChild
                 data-testid="action-nutrition"
@@ -532,9 +532,9 @@ export default function Home() {
                   </div>
                 </Link>
               </Button>
-              
-              <Button 
-                variant="outline" 
+
+              <Button
+                variant="outline"
                 className="h-20 border-gold-500/50 text-gold-400 hover:bg-gold-500/10"
                 asChild
                 data-testid="action-progress"
@@ -546,9 +546,9 @@ export default function Home() {
                   </div>
                 </Link>
               </Button>
-              
-              <Button 
-                variant="outline" 
+
+              <Button
+                variant="outline"
                 className="h-20 border-gold-500/50 text-gold-400 hover:bg-gold-500/10"
                 data-testid="action-analytics"
               >
