@@ -32,19 +32,19 @@ export default function Landing() {
   const handleCheckout = async (plan: string) => {
     try {
       setLoadingPlan(plan);
-      
+
       // For Start plan, redirect to login
       if (plan === "Start") {
         window.location.href = "/api/login";
         return;
       }
-      
+
       const res = await fetch("/api/create-mollie-payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ plan }),
       });
-      
+
       if (res.status === 401) {
         toast({
           title: "Niet ingelogd",
@@ -53,9 +53,9 @@ export default function Landing() {
         });
         return;
       }
-      
+
       const data = await res.json();
-      
+
       if (data?.url) {
         window.location.href = data.url;
       } else {
@@ -101,7 +101,7 @@ export default function Landing() {
               Marcodonato B.V
             </span>
           </div>
-          
+
           <nav className="hidden md:flex items-center gap-6 text-sm">
             <a 
               href="#features" 
@@ -128,7 +128,7 @@ export default function Landing() {
               FAQ
             </a>
           </nav>
-          
+
           <div className="hidden sm:flex items-center gap-3">
             <Button
               variant="outline"
@@ -146,7 +146,7 @@ export default function Landing() {
               Probeer gratis
             </Button>
           </div>
-          
+
           <button 
             aria-label="Open menu" 
             className="md:hidden p-3 rounded-lg border border-gold-500 min-h-[44px] min-w-[44px] flex items-center justify-center" 
@@ -156,7 +156,7 @@ export default function Landing() {
             {menuOpen ? <X /> : <Menu />}
           </button>
         </div>
-        
+
         {menuOpen && (
           <div className="md:hidden border-t border-gold-500 bg-black/95 backdrop-blur">
             <div className="max-w-7xl mx-auto px-3 py-4 flex flex-col gap-4">
@@ -203,7 +203,7 @@ export default function Landing() {
             className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(251,191,36,0.1),transparent_50%)]"
             style={{ y, opacity }}
           />
-          
+
           <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-8 sm:py-14 lg:py-20 grid lg:grid-cols-2 gap-8 lg:gap-12 items-center relative z-10">
             <div>
               <motion.div
@@ -216,7 +216,7 @@ export default function Landing() {
                 <Zap className="h-4 w-4" />
                 Nu gebruikt door 10,000+ atleten
               </motion.div>
-              
+
               <motion.h1 
                 initial={{opacity:0,y:30}} 
                 animate={{opacity:1,y:0}} 
@@ -226,7 +226,7 @@ export default function Landing() {
               >
                 Elite Exclusive Personal Training App
               </motion.h1>
-              
+
               <motion.p 
                 initial={{opacity:0,y:30}} 
                 animate={{opacity:1,y:0}} 
@@ -236,7 +236,7 @@ export default function Landing() {
               >
                 Persoonlijke trainingsschema's, progressie‑tracking, slimme gewichtsadviezen en een complete voedingsbibliotheek — in Marcodonato stijl.
               </motion.p>
-              
+
               <motion.ul 
                 initial={{opacity:0,y:30}} 
                 animate={{opacity:1,y:0}} 
@@ -260,7 +260,7 @@ export default function Landing() {
                   <span>Vooruitgangs‑analytics met PR's en foto‑timeline</span>
                 </li>
               </motion.ul>
-              
+
               <motion.div 
                 initial={{opacity:0,y:30}} 
                 animate={{opacity:1,y:0}} 
@@ -269,8 +269,8 @@ export default function Landing() {
               >
                 <Button
                   size="lg"
-                  className="bg-gold-500 text-black hover:bg-gold-400 w-full sm:w-auto"
-                  onClick={() => window.location.href = "/api/login"}
+                  className="bg-gold-500 hover:bg-gold-600 text-black font-semibold px-8 py-4 text-lg"
+                  onClick={() => window.location.href = '/api/login'}
                   data-testid="button-start-trial"
                 >
                   Start jouw proefperiode
@@ -285,12 +285,12 @@ export default function Landing() {
                   Bekijk demo
                 </Button>
               </motion.div>
-              
+
               <p className="mt-3 text-xs sm:text-sm text-gold-300 text-center sm:text-left" data-testid="trial-info">
                 Geen creditcard nodig · Annuleer wanneer je wilt
               </p>
             </div>
-            
+
             {/* App Mockup */}
             <div className="relative">
               <motion.div 
@@ -313,7 +313,7 @@ export default function Landing() {
                       <div>Fly</div><div>3×12</div><div>18 kg</div>
                     </div>
                   </div>
-                  
+
                   <div className="rounded-2xl p-4 bg-black border border-gold-500">
                     <div className="flex items-center gap-2 mb-2 text-sm font-medium text-gold-500">
                       <BarChart3 className="h-4 w-4"/>
@@ -322,7 +322,7 @@ export default function Landing() {
                     <div className="text-sm text-gold-300">+12% volume t.o.v. vorige week</div>
                     <div className="h-24 mt-2 rounded-xl bg-gradient-to-tr from-yellow-900 to-yellow-600"/>
                   </div>
-                  
+
                   <div className="rounded-2xl p-4 bg-black border border-gold-500">
                     <div className="flex items-center gap-2 mb-2 text-sm font-medium text-gold-500">
                       <Utensils className="h-4 w-4"/>
@@ -440,7 +440,7 @@ export default function Landing() {
               <FeatureCard 
                 icon={<Timer/>} 
                 title="Slimme progressie" 
-                description="Automatische gewichtsaanbevelingen op basis van je vorige sets (progressive overload)."
+                description="Automatische gewichtsadviezen op basis van je vorige sets (progressive overload)."
                 testId="feature-progression"
               />
               <FeatureCard 
@@ -709,7 +709,7 @@ function StatCard({ icon, value, suffix, label, testId }: StatCardProps) {
   const [count, setCount] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -719,14 +719,14 @@ function StatCard({ icon, value, suffix, label, testId }: StatCardProps) {
       },
       { threshold: 0.1 }
     );
-    
+
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
   }, [isVisible]);
-  
+
   useEffect(() => {
     if (!isVisible) return;
-    
+
     let start = 0;
     const duration = 2000;
     const increment = value / (duration / 16);
@@ -739,10 +739,10 @@ function StatCard({ icon, value, suffix, label, testId }: StatCardProps) {
         setCount(Math.floor(start));
       }
     }, 16);
-    
+
     return () => clearInterval(timer);
   }, [isVisible, value]);
-  
+
   return (
     <motion.div 
       ref={ref}
