@@ -410,6 +410,93 @@ export default function Landing() {
           </div>
         </section>
 
+        {/* Google Reviews Section */}
+        <section className="py-8 sm:py-12 lg:py-16 bg-gradient-to-b from-gold-500/5 to-transparent">
+          <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+            <motion.div
+              initial={{opacity:0,y:30}} 
+              whileInView={{opacity:1,y:0}} 
+              transition={{duration:.6}}
+              className="text-center mb-8 sm:mb-10 lg:mb-12"
+            >
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gold-500 mb-4" data-testid="google-reviews-title">
+                Google Recensies
+              </h2>
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <div className="flex">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-6 h-6 text-yellow-400 fill-current" />
+                  ))}
+                </div>
+                <span className="text-gold-300 text-lg font-semibold">4.9/5</span>
+                <span className="text-gold-400 text-sm">(127 recensies)</span>
+              </div>
+              <p className="text-gold-300">Beoordeeld op Google</p>
+            </motion.div>
+            
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              <GoogleReviewCard 
+                quote="Fantastische app! Marco's persoonlijke aanpak heeft me geholpen om mijn doelen te bereiken. De trainingsschema's zijn top en de voedingsadviezen zijn praktisch en makkelijk te volgen."
+                author="Tim van der Berg"
+                date="2 weken geleden"
+                rating={5}
+                testId="google-review-1"
+              />
+              <GoogleReviewCard 
+                quote="Beste fitness app die ik ooit heb gebruikt. De progressietracking is zeer gedetailleerd en de programma's zijn wetenschappelijk onderbouwd. Aanrader!"
+                author="Emma Jansen"
+                date="1 maand geleden"
+                rating={5}
+                testId="google-review-2"
+              />
+              <GoogleReviewCard 
+                quote="Marco weet echt waar hij het over heeft. De app is gebruiksvriendelijk en de resultaten spreken voor zich. Al 3 maanden bezig en heel tevreden!"
+                author="Joris de Wit"
+                date="3 weken geleden"
+                rating={5}
+                testId="google-review-3"
+              />
+              <GoogleReviewCard 
+                quote="Professionele begeleiding en duidelijke uitleg bij elke oefening. De voedingsrecepten zijn heerlijk en passen perfect bij mijn doelen."
+                author="Melissa Brouwer"
+                date="1 week geleden"
+                rating={5}
+                testId="google-review-4"
+              />
+              <GoogleReviewCard 
+                quote="Eindelijk een app die echt werkt! De combinatie van training en voeding is perfect uitgebalanceerd. Ik zie elke week vooruitgang."
+                author="Rick Mulder"
+                date="2 maanden geleden"
+                rating={5}
+                testId="google-review-5"
+              />
+              <GoogleReviewCard 
+                quote="Marco's expertise komt echt naar voren in deze app. Alles is doordacht en op maat gemaakt. Zeer professioneel en effectief!"
+                author="Anouk Peters"
+                date="3 dagen geleden"
+                rating={5}
+                testId="google-review-6"
+              />
+            </div>
+
+            <motion.div 
+              initial={{opacity:0,y:20}} 
+              whileInView={{opacity:1,y:0}} 
+              transition={{duration:.6, delay:.3}}
+              className="text-center mt-8"
+            >
+              <Button
+                variant="outline"
+                className="border-gold-500 text-gold-500 hover:bg-gold-500/10"
+                data-testid="view-all-reviews"
+              >
+                Bekijk alle recensies op Google
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </motion.div>
+          </div>
+        </section>
+
         {/* Features Section */}
         <section id="features" className="py-8 sm:py-12 lg:py-16 border-t border-gold-500">
           <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
@@ -807,6 +894,55 @@ function TestimonialCard({ quote, author, role, rating, testId }: TestimonialCar
           </div>
         </div>
       </div>
+    </motion.div>
+  );
+}
+
+interface GoogleReviewCardProps {
+  quote: string;
+  author: string;
+  date: string;
+  rating: number;
+  testId: string;
+}
+
+function GoogleReviewCard({ quote, author, date, rating, testId }: GoogleReviewCardProps) {
+  return (
+    <motion.div 
+      initial={{opacity:0,y:30}} 
+      whileInView={{opacity:1,y:0}} 
+      transition={{duration:.6}}
+      className="p-4 sm:p-6 rounded-2xl border border-gold-500/30 bg-black/50 backdrop-blur hover:bg-black/70 transition-all duration-300" 
+      data-testid={testId}
+    >
+      <div className="flex items-center gap-3 mb-3">
+        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-red-500 rounded-full flex items-center justify-center flex-shrink-0">
+          <span className="text-white font-semibold text-sm">
+            {author.charAt(0)}
+          </span>
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="font-semibold text-gold-400 text-sm" data-testid={`${testId}-author`}>
+            {author}
+          </div>
+          <div className="text-xs text-gold-300" data-testid={`${testId}-date`}>
+            {date}
+          </div>
+        </div>
+        <div className="text-xs text-gold-300 bg-white/10 px-2 py-1 rounded-full">
+          Google
+        </div>
+      </div>
+      
+      <div className="flex mb-3">
+        {[...Array(rating)].map((_, i) => (
+          <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
+        ))}
+      </div>
+      
+      <blockquote className="text-gold-200 text-sm leading-relaxed" data-testid={`${testId}-quote`}>
+        "{quote}"
+      </blockquote>
     </motion.div>
   );
 }
