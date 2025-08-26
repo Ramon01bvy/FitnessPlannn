@@ -25,15 +25,30 @@ function Router() {
 
   return (
     <Switch>
-      {!isAuthenticated ? (
-        <Route path="/" component={Landing} />
-      ) : (
+      <Route path="/">
+        {isAuthenticated ? (
+          <>
+            <Navbar />
+            <Home />
+          </>
+        ) : (
+          <Landing />
+        )}
+      </Route>
+      {isAuthenticated && (
         <>
-          <Navbar />
-          <Route path="/" component={Home} />
-          <Route path="/workouts" component={Workouts} />
-          <Route path="/nutrition" component={Nutrition} />
-          <Route path="/progress" component={Progress} />
+          <Route path="/workouts">
+            <Navbar />
+            <Workouts />
+          </Route>
+          <Route path="/nutrition">
+            <Navbar />
+            <Nutrition />
+          </Route>
+          <Route path="/progress">
+            <Navbar />
+            <Progress />
+          </Route>
         </>
       )}
       <Route component={NotFound} />
