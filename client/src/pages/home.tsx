@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -20,6 +20,50 @@ import { Link } from "wouter";
 export default function Home() {
   const { user, isAuthenticated, isLoading } = useAuth();
   const { toast } = useToast();
+  const [upgradingPlan, setUpgradingPlan] = useState<string | null>(null);
+
+  const handleUpgrade = async (plan: string) => {
+    try {
+      setUpgradingPlan(plan);
+
+      const res = await fetch("/api/create-mollie-payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan }),
+      });
+
+      if (res.status === 401) {
+        toast({
+          title: "Niet geautoriseerd",
+          description: "Je sessie is verlopen. Log opnieuw in.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const data = await res.json();
+
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        console.error("Payment error:", data);
+        toast({
+          title: "Betalingsfout",
+          description: data.message || "Kon geen betaal-URL ophalen. Probeer het opnieuw.",
+          variant: "destructive",
+        });
+      }
+    } catch (err) {
+      console.error("Mollie payment error", err);
+      toast({
+        title: "Fout",
+        description: "Er ging iets mis met de betaling. Probeer het later opnieuw.",
+        variant: "destructive",
+      });
+    } finally {
+      setUpgradingPlan(null);
+    }
+  };
 
   // Redirect to home if not authenticated
   useEffect(() => {
@@ -270,6 +314,100 @@ export default function Home() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Upgrade Plans Section */}
+        {(!user?.subscriptionTier || user?.subscriptionTier === 'Start') && (
+          <Card className="bg-card border-gold-500/30" data-testid="upgrade-plans">
+            <CardHeader>
+              <CardTitle className="text-gold-400">Upgrade je plan</CardTitle>
+              <CardDescription className="text-gold-300">
+                Ontgrendel alle functies met een Pro of Jaar abonnement
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Pro Plan */}
+                <div className="bg-gradient-to-br from-gold-500/10 to-gold-600/5 border border-gold-500/30 rounded-lg p-6">
+                  <div className="text-center mb-4">
+                    <h3 className="text-xl font-bold text-gold-400 mb-2">Pro</h3>
+                    <div className="text-3xl font-bold text-white">€14,99</div>
+                    <div className="text-gold-300 text-sm">per maand</div>
+                  </div>
+                  <ul className="space-y-2 mb-6">
+                    <li className="flex items-center text-gold-200">
+                      <Trophy className="h-4 w-4 mr-2 text-gold-500" />
+                      Alle programma's
+                    </li>
+                    <li className="flex items-center text-gold-200">
+                      <Activity className="h-4 w-4 mr-2 text-gold-500" />
+                      Slimme gewichtsadviezen
+                    </li>
+                    <li className="flex items-center text-gold-200">
+                      <Apple className="h-4 w-4 mr-2 text-gold-500" />
+                      Volledige recepten
+                    </li>
+                    <li className="flex items-center text-gold-200">
+                      <BarChart3 className="h-4 w-4 mr-2 text-gold-500" />
+                      Analytics & PR's
+                    </li>
+                  </ul>
+                  <Button 
+                    className="w-full bg-gold-500 text-black hover:bg-gold-400"
+                    onClick={() => handleUpgrade('Pro')}
+                    disabled={upgradingPlan === 'Pro'}
+                    data-testid="upgrade-pro"
+                  >
+                    {upgradingPlan === 'Pro' ? 'Bezig...' : 'Upgrade naar Pro'}
+                  </Button>
+                </div>
+
+                {/* Jaar Plan */}
+                <div className="bg-gradient-to-br from-gold-500/20 to-gold-600/10 border-2 border-gold-500/50 rounded-lg p-6 relative">
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                    <span className="bg-gold-500 text-black px-3 py-1 rounded-full text-xs font-bold">
+                      BESTE DEAL
+                    </span>
+                  </div>
+                  <div className="text-center mb-4">
+                    <h3 className="text-xl font-bold text-gold-400 mb-2">Jaar</h3>
+                    <div className="text-3xl font-bold text-white">€119</div>
+                    <div className="text-gold-300 text-sm">per jaar</div>
+                    <div className="text-xs text-gold-400 mt-1">2 maanden gratis!</div>
+                  </div>
+                  <ul className="space-y-2 mb-6">
+                    <li className="flex items-center text-gold-200">
+                      <Trophy className="h-4 w-4 mr-2 text-gold-500" />
+                      Alles van Pro
+                    </li>
+                    <li className="flex items-center text-gold-200">
+                      <Activity className="h-4 w-4 mr-2 text-gold-500" />
+                      2 maanden gratis
+                    </li>
+                    <li className="flex items-center text-gold-200">
+                      <Apple className="h-4 w-4 mr-2 text-gold-500" />
+                      Exclusieve challenges
+                    </li>
+                    <li className="flex items-center text-gold-200">
+                      <BarChart3 className="h-4 w-4 mr-2 text-gold-500" />
+                      Prioriteit ondersteuning
+                    </li>
+                  </ul>
+                  <Button 
+                    className="w-full bg-gold-500 text-black hover:bg-gold-400"
+                    onClick={() => handleUpgrade('Jaar')}
+                    disabled={upgradingPlan === 'Jaar'}
+                    data-testid="upgrade-year"
+                  >
+                    {upgradingPlan === 'Jaar' ? 'Bezig...' : 'Upgrade naar Jaar'}
+                  </Button>
+                </div>
+              </div>
+              <p className="mt-4 text-gold-300 text-xs text-center">
+                Betalingen veilig verwerkt met Mollie Payments
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Quick Actions */}
         <Card className="bg-card border-gold-500/30" data-testid="quick-actions">
