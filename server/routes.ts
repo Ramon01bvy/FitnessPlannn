@@ -33,7 +33,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { plan } = req.body;
       const userId = req.user.claims.sub;
       
+      console.log("Payment request for plan:", plan, "user:", userId);
+      console.log("Mollie API key present:", !!process.env.MOLLIE_API_KEY);
+      
       if (!process.env.MOLLIE_API_KEY) {
+        console.error("Mollie API key not found in environment");
         return res.status(500).json({ message: "Mollie API key not configured" });
       }
 

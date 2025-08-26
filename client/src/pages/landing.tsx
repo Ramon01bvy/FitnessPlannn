@@ -44,14 +44,25 @@ export default function Landing() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ plan }),
       });
+      
+      if (res.status === 401) {
+        toast({
+          title: "Niet ingelogd",
+          description: "Je moet eerst inloggen. Probeer de Start knop.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       const data = await res.json();
       
       if (data?.url) {
         window.location.href = data.url;
       } else {
+        console.error("Payment error:", data);
         toast({
-          title: "Fout",
-          description: "Kon geen betaal-URL ophalen. Probeer het opnieuw.",
+          title: "Betalingsfout",
+          description: data.message || "Kon geen betaal-URL ophalen. Probeer het opnieuw.",
           variant: "destructive",
         });
       }
