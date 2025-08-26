@@ -413,8 +413,6 @@ export default function Home() {
 
                 {/* Pro Plan */}
                 <div className="bg-gradient-to-br from-gold-500/10 to-gold-600/5 border border-gold-500/30 rounded-lg p-6">
-                {/* Pro Plan */}
-                <div className="bg-gradient-to-br from-gold-500/10 to-gold-600/5 border border-gold-500/30 rounded-lg p-6">
                   <div className="text-center mb-4">
                     <h3 className="text-xl font-bold text-gold-400 mb-2">Pro</h3>
                     <div className="text-3xl font-bold text-white">€14,99</div>
@@ -445,47 +443,6 @@ export default function Home() {
                     data-testid="upgrade-pro"
                   >
                     {upgradingPlan === 'Pro' ? 'Bezig...' : 'Upgrade naar Pro'}
-                  </Button>
-                </div>
-
-                {/* Jaar Plan */}
-                <div className="bg-gradient-to-br from-gold-500/20 to-gold-600/10 border-2 border-gold-500/50 rounded-lg p-6 relative">
-                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-gold-500 text-black px-3 py-1 rounded-full text-xs font-bold">
-                      BESTE DEAL
-                    </span>
-                  </div>
-                  <div className="text-center mb-4">
-                    <h3 className="text-xl font-bold text-gold-400 mb-2">Jaar</h3>
-                    <div className="text-3xl font-bold text-white">€119</div>
-                    <div className="text-gold-300 text-sm">per jaar</div>
-                    <div className="text-xs text-gold-400 mt-1">2 maanden gratis!</div>
-                  </div>
-                  <ul className="space-y-2 mb-6">
-                    <li className="flex items-center text-gold-200">
-                      <Trophy className="h-4 w-4 mr-2 text-gold-500" />
-                      Alles van Pro
-                    </li>
-                    <li className="flex items-center text-gold-200">
-                      <Activity className="h-4 w-4 mr-2 text-gold-500" />
-                      2 maanden gratis
-                    </li>
-                    <li className="flex items-center text-gold-200">
-                      <Apple className="h-4 w-4 mr-2 text-gold-500" />
-                      Exclusieve challenges
-                    </li>
-                    <li className="flex items-center text-gold-200">
-                      <BarChart3 className="h-4 w-4 mr-2 text-gold-500" />
-                      Prioriteit ondersteuning
-                    </li>
-                  </ul>
-                  <Button
-                    className="w-full bg-gold-500 text-black hover:bg-gold-400"
-                    onClick={() => handleUpgrade('Jaar')}
-                    disabled={upgradingPlan === 'Jaar'}
-                    data-testid="upgrade-year"
-                  >
-                    {upgradingPlan === 'Jaar' ? 'Bezig...' : 'Upgrade naar Jaar'}
                   </Button>
                 </div>
 
