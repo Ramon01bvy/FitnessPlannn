@@ -33,43 +33,49 @@ export interface IStorage {
   // User operations (mandatory for Replit Auth)
   getUser(id: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
-  
+  updateUserSubscription(userId: string, subscriptionData: {
+    subscriptionTier: string;
+    subscriptionStatus: string;
+    subscriptionExpiresAt: Date;
+    mollieCustomerId?: string | null;
+  }): Promise<User>;
+
   // Workout operations
   createWorkoutSession(session: InsertWorkoutSession): Promise<WorkoutSession>;
   getWorkoutSessions(userId: string, limit?: number): Promise<WorkoutSession[]>;
   getWorkoutSession(id: string): Promise<WorkoutSession | undefined>;
   updateWorkoutSession(id: string, updates: Partial<InsertWorkoutSession>): Promise<WorkoutSession>;
-  
+
   // Workout sets operations
   createWorkoutSet(set: InsertWorkoutSet): Promise<WorkoutSet>;
   getWorkoutSets(sessionId: string): Promise<WorkoutSet[]>;
   updateWorkoutSet(id: string, updates: Partial<InsertWorkoutSet>): Promise<WorkoutSet>;
-  
+
   // Exercise operations
   getExercises(): Promise<Exercise[]>;
   getExercise(id: string): Promise<Exercise | undefined>;
-  
+
   // Workout program operations
   getWorkoutPrograms(): Promise<WorkoutProgram[]>;
   getWorkoutProgram(id: string): Promise<WorkoutProgram | undefined>;
-  
+
   // Recipe operations
   getRecipes(limit?: number): Promise<Recipe[]>;
   getRecipe(id: string): Promise<Recipe | undefined>;
-  
+
   // Meal tracking operations
   createMealEntry(entry: InsertMealEntry): Promise<MealEntry>;
   getMealEntries(userId: string, date: Date): Promise<MealEntry[]>;
   getMealEntriesRange(userId: string, startDate: Date, endDate: Date): Promise<MealEntry[]>;
-  
+
   // Progress tracking operations
   createProgressPhoto(photo: InsertProgressPhoto): Promise<ProgressPhoto>;
   getProgressPhotos(userId: string, limit?: number): Promise<ProgressPhoto[]>;
-  
+
   // Personal records operations
   createPersonalRecord(record: InsertPersonalRecord): Promise<PersonalRecord>;
   getPersonalRecords(userId: string, exerciseId?: string): Promise<PersonalRecord[]>;
-  
+
   // Analytics operations
   getWeeklyVolume(userId: string, weekStart: Date): Promise<number>;
   getWorkoutStreak(userId: string): Promise<number>;
@@ -93,6 +99,25 @@ export class DatabaseStorage implements IStorage {
           updatedAt: new Date(),
         },
       })
+      .returning();
+    return user;
+  }
+
+  async updateUserSubscription(userId: string, subscriptionData: {
+    subscriptionTier: string;
+    subscriptionStatus: string;
+    subscriptionExpiresAt: Date;
+    mollieCustomerId?: string | null;
+  }): Promise<User> {
+    const [user] = await db.update(users)
+      .set({
+        subscriptionTier: subscriptionData.subscriptionTier,
+        subscriptionStatus: subscriptionData.subscriptionStatus,
+        subscriptionExpiresAt: subscriptionData.subscriptionExpiresAt,
+        mollieCustomerId: subscriptionData.mollieCustomerId,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, userId))
       .returning();
     return user;
   }
@@ -330,9 +355,9 @@ export class DatabaseStorage implements IStorage {
     for (const session of sessions) {
       const sessionDate = new Date(session.date);
       sessionDate.setHours(0, 0, 0, 0);
-      
+
       const daysDiff = Math.floor((currentDate.getTime() - sessionDate.getTime()) / (1000 * 60 * 60 * 24));
-      
+
       if (daysDiff === streak || (streak === 0 && daysDiff <= 1)) {
         streak++;
         currentDate = sessionDate;

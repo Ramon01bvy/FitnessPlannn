@@ -33,9 +33,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { plan } = req.body;
       const userId = req.user.claims.sub;
       
-      // TODO: Integrate with actual Mollie API
-      // For now, simulate successful payment URL generation
-      const mollieApiKey = process.env.MOLLIE_API_KEY || "test_mollie_key";
+      if (!process.env.MOLLIE_API_KEY) {
+        return res.status(500).json({ message: "Mollie API key not configured" });
+      }
+
+      // Import Mollie client
+      const { createMollieClient } = await import('@mollie/api-client');
+      const mollieClient = createMollieClient({ apiKey: process.env.MOLLIE_API_KEY });
       
       let amount: string;
       let description: string;
@@ -53,10 +57,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return res.status(400).json({ message: 'Invalid plan selected' });
       }
 
-      // In production, create actual Mollie payment here
-      const mockPaymentUrl = `https://checkout.mollie.com/select-method/mock-${Date.now()}`;
+      // Get user details for payment
+      const user = await storage.getUser(userId);
       
-      res.json({ url: mockPaymentUrl });
+      // Create Mollie payment
+      const payment = await mollieClient.payments.create({
+        amount: {
+          currency: 'EUR',
+          value: amount
+        },
+        description: description,
+        redirectUrl: `${req.protocol}://${req.get('host')}/api/payment/success?plan=${plan}`,
+        webhookUrl: `${req.protocol}://${req.get('host')}/api/payment/webhook`,
+        metadata: {
+          userId: userId,
+          plan: plan
+        }
+      });
+      
+      res.json({ url: payment.getCheckoutUrl() });
     } catch (error) {
       console.error("Mollie payment error:", error);
       res.status(500).json({ message: "Payment creation failed" });
@@ -228,6 +247,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error creating personal record:", error);
       res.status(500).json({ message: "Failed to create personal record" });
+    }
+  });
+
+  // Payment success and webhook routes
+  app.get('/api/payment/success', async (req, res) => {
+    const { plan } = req.query;
+    // Redirect to success page with plan info
+    res.redirect(`/?payment=success&plan=${plan}`);
+  });
+
+  app.post('/api/payment/webhook', async (req, res) => {
+    try {
+      if (!process.env.MOLLIE_API_KEY) {
+        return res.status(500).json({ message: "Mollie API key not configured" });
+      }
+
+      const { createMollieClient } = await import('@mollie/api-client');
+      const mollieClient = createMollieClient({ apiKey: process.env.MOLLIE_API_KEY });
+      
+      const paymentId = req.body.id;
+      const payment = await mollieClient.payments.get(paymentId);
+      
+      if (payment.isPaid()) {
+        const { userId, plan } = payment.metadata;
+        
+        // Update user subscription
+        let subscriptionExpiresAt = new Date();
+        
+        if (plan === 'Pro') {
+          // Monthly subscription
+          subscriptionExpiresAt.setMonth(subscriptionExpiresAt.getMonth() + 1);
+        } else if (plan === 'Jaar') {
+          // Yearly subscription
+          subscriptionExpiresAt.setFullYear(subscriptionExpiresAt.getFullYear() + 1);
+        }
+        
+        await storage.updateUserSubscription(userId, {
+          subscriptionTier: plan,
+          subscriptionStatus: 'active',
+          subscriptionExpiresAt,
+          mollieCustomerId: payment.customerId || null
+        });
+        
+        console.log(`Payment successful for user ${userId}, plan: ${plan}`);
+      } else if (payment.isCanceled() || payment.isExpired() || payment.isFailed()) {
+        console.log(`Payment failed for payment ${paymentId}: ${payment.status}`);
+      }
+      
+      res.status(200).send('OK');
+    } catch (error) {
+      console.error("Webhook error:", error);
+      res.status(500).json({ message: "Webhook processing failed" });
     }
   });
 
