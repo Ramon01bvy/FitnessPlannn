@@ -26,6 +26,17 @@ export default function Home() {
     try {
       setUpgradingPlan(plan);
 
+      // For Start plan, just show success message (free trial)
+      if (plan === "Start") {
+        toast({
+          title: "Proefperiode gestart!",
+          description: "Je hebt nu toegang tot alle Start functies voor 7 dagen.",
+        });
+        // Refresh user data to show new subscription tier
+        window.location.reload();
+        return;
+      }
+
       const res = await fetch("/api/create-mollie-payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -315,6 +326,49 @@ export default function Home() {
           </Card>
         </div>
 
+        {/* Start Trial Section - Show if no subscription */}
+        {!user?.subscriptionTier && (
+          <Card className="bg-gradient-to-br from-gold-500/20 to-gold-600/10 border-2 border-gold-500/50" data-testid="start-trial">
+            <CardHeader className="text-center">
+              <CardTitle className="text-gold-400 text-2xl">Start je gratis proefperiode</CardTitle>
+              <CardDescription className="text-gold-300">
+                Probeer alle functies 7 dagen gratis, geen creditcard nodig
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="text-center">
+              <div className="space-y-4">
+                <div className="text-4xl font-bold text-white">7 dagen</div>
+                <div className="text-gold-300">Volledig gratis toegang</div>
+                <ul className="space-y-2 text-left max-w-md mx-auto">
+                  <li className="flex items-center text-gold-200">
+                    <Trophy className="h-4 w-4 mr-2 text-gold-500" />
+                    Toegang tot 3 voorbeeldprogramma's
+                  </li>
+                  <li className="flex items-center text-gold-200">
+                    <Activity className="h-4 w-4 mr-2 text-gold-500" />
+                    Basistracking van workouts
+                  </li>
+                  <li className="flex items-center text-gold-200">
+                    <Apple className="h-4 w-4 mr-2 text-gold-500" />
+                    Beperkte recepten
+                  </li>
+                </ul>
+                <Button 
+                  className="w-full bg-gold-500 text-black hover:bg-gold-400 text-lg py-6"
+                  onClick={() => handleUpgrade('Start')}
+                  disabled={upgradingPlan === 'Start'}
+                  data-testid="start-trial-button"
+                >
+                  {upgradingPlan === 'Start' ? 'Bezig...' : 'Start jouw gratis proefperiode'}
+                </Button>
+                <p className="text-xs text-gold-300">
+                  Geen creditcard nodig · Annuleer wanneer je wilt
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Upgrade Plans Section */}
         {(!user?.subscriptionTier || user?.subscriptionTier === 'Start') && (
           <Card className="bg-card border-gold-500/30" data-testid="upgrade-plans">
@@ -325,6 +379,38 @@ export default function Home() {
               </CardDescription>
             </CardHeader>
             <CardContent>
+              <div className="grid md:grid-cols-3 gap-6">
+                {/* Start Plan */}
+                <div className="bg-gradient-to-br from-gray-500/10 to-gray-600/5 border border-gray-500/30 rounded-lg p-6">
+                  <div className="text-center mb-4">
+                    <h3 className="text-xl font-bold text-gold-400 mb-2">Start</h3>
+                    <div className="text-3xl font-bold text-white">€0</div>
+                    <div className="text-gold-300 text-sm">7 dagen gratis</div>
+                  </div>
+                  <ul className="space-y-2 mb-6">
+                    <li className="flex items-center text-gold-200">
+                      <Trophy className="h-4 w-4 mr-2 text-gold-500" />
+                      3 voorbeeldprogramma's
+                    </li>
+                    <li className="flex items-center text-gold-200">
+                      <Activity className="h-4 w-4 mr-2 text-gold-500" />
+                      Basistracking
+                    </li>
+                    <li className="flex items-center text-gold-200">
+                      <Apple className="h-4 w-4 mr-2 text-gold-500" />
+                      Beperkte recepten
+                    </li>
+                  </ul>
+                  <Button 
+                    className="w-full bg-gray-500 text-white hover:bg-gray-400"
+                    onClick={() => handleUpgrade('Start')}
+                    disabled={upgradingPlan === 'Start' || user?.subscriptionTier === 'Start'}
+                    data-testid="upgrade-start"
+                  >
+                    {user?.subscriptionTier === 'Start' ? 'Huidig plan' : upgradingPlan === 'Start' ? 'Bezig...' : 'Start gratis proefperiode'}
+                  </Button>
+                </div>
+
               <div className="grid md:grid-cols-2 gap-6">
                 {/* Pro Plan */}
                 <div className="bg-gradient-to-br from-gold-500/10 to-gold-600/5 border border-gold-500/30 rounded-lg p-6">
